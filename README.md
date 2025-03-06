@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Andrea's Reward Chart
 
-## Getting Started
+A simple, child-friendly web application for tracking daily tasks and earning rewards. This application is designed to help children visualize their progress and stay motivated to complete their daily tasks.
 
-First, run the development server:
+## Features
+
+- Track daily tasks completion
+- Visual reward chart with checkmarks
+- Point system for completed tasks
+- Reward levels that unlock as points accumulate
+- Data is saved locally in the browser (no login required)
+- Mobile-friendly design
+
+## How to Use
+
+1. **For Parents:**
+   - Set up the application on a device your child can access
+   - Explain the tasks and rewards to your child
+   - Help them mark tasks as completed initially
+   - Use the "Reset Chart" button at the end of each week or when starting a new reward period
+
+2. **For Children:**
+   - Click on the circle in the chart to mark a task as completed
+   - Watch your points increase as you complete tasks
+   - See which rewards you've unlocked based on your points
+
+## Tasks Included
+
+- Total Goal
+- Finish Homework (reading and writing)
+- Toilet 4 Times
+- Talk, No Only Cry
+- TV Less Than 30 Mins
+- Running
+- Other Sports 🏀
+- Eat Vege 🥦
+- Go To Bed At 8PM
+
+## Rewards
+
+- 7 Points: ⭐ Extra Bedtime or TV time (20 minutes)
+- 25 Points: 🎮 Robox Time and Ice cream
+- 40 Points: 🎁 Pick Up Your Gift (A toy) or treat under $20
+- 45 Points: 🎁 Pick Up Your Gift (A toy) or treat under $20
+
+## Development
+
+This application is built with:
+- Next.js
+- React
+- TypeScript
+- TailwindCSS
+
+### Running Locally
 
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Customization
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can customize the tasks and rewards by editing the `TASKS` and `REWARD_POINTS` arrays in the `src/app/page.tsx` file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## License
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is open source and available for personal use.

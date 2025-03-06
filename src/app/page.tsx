@@ -1,101 +1,188 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+
+// Define the task types based on the reward chart
+const TASKS = [
+  { id: "total-goal", label: "Total Goal" },
+  { id: "finish-homework", label: "Finish Homework (reading and writing)" },
+  { id: "toilet-4-times", label: "Toilet 4 Times" },
+  { id: "talk-no-only-cry", label: "Talk, No Only Cry" },
+  { id: "tv-less-than-30-mins", label: "TV Less Than 30 Mins" },
+  { id: "running", label: "Running" },
+  { id: "other-sports", label: "Other Sports 🏀" },
+  { id: "eat-vege", label: "Eat Vege 🥦" },
+  { id: "go-to-bed-at-8pm", label: "Go To Bed At 8PM" }
+];
+
+// Define the days of the week
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+// Define the reward points
+const REWARD_POINTS = [
+  { points: 7, label: "7 Points: ⭐ Extra Bedtime or TV time (20 minutes)" },
+  { points: 25, label: "25 Points: 🎮 Robox Time and Ice cream" },
+  { points: 40, label: "40 Points: 🎁 Pick Up Your Gift (A toy) or treat under $20" },
+  { points: 45, label: "45 Points: 🎁 Pick Up Your Gift (A toy) or treat under $20" }
+];
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  // State to track completed tasks
+  const [completedTasks, setCompletedTasks] = useState<Record<string, Record<string, boolean>>>({});
+  const [totalPoints, setTotalPoints] = useState<number>(0);
+  const [recentlyCompleted, setRecentlyCompleted] = useState<string | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // Load saved data from localStorage on component mount
+  useEffect(() => {
+    const savedData = localStorage.getItem("rewardChartData");
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        setCompletedTasks(parsedData.completedTasks || {});
+        setTotalPoints(parsedData.totalPoints || 0);
+      } catch (error) {
+        console.error("Error loading saved data:", error);
+      }
+    }
+  }, []);
+
+  // Calculate total points whenever completedTasks changes
+  useEffect(() => {
+    calculateTotalPoints();
+  }, [completedTasks]);
+
+  // Save data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("rewardChartData", JSON.stringify({
+      completedTasks,
+      totalPoints
+    }));
+  }, [completedTasks, totalPoints]);
+
+  // Toggle task completion
+  const toggleTask = (taskId: string, day: string) => {
+    const taskKey = `${taskId}-${day}`;
+
+    setCompletedTasks(prev => {
+      const newCompletedTasks = { ...prev };
+
+      // Initialize the day if it doesn't exist
+      if (!newCompletedTasks[day]) {
+        newCompletedTasks[day] = {};
+      }
+
+      // Toggle the task completion
+      newCompletedTasks[day][taskId] = !newCompletedTasks[day][taskId];
+
+      return newCompletedTasks;
+    });
+
+    // Set recently completed for animation
+    setRecentlyCompleted(taskKey);
+    setTimeout(() => setRecentlyCompleted(null), 300);
+  };
+
+  // Calculate total points
+  const calculateTotalPoints = () => {
+    let points = 0;
+
+    Object.keys(completedTasks).forEach(day => {
+      Object.keys(completedTasks[day]).forEach(taskId => {
+        if (completedTasks[day][taskId]) {
+          points += 1;
+        }
+      });
+    });
+
+    setTotalPoints(points);
+  };
+
+  // Reset all data
+  const resetData = () => {
+    if (confirm("Are you sure you want to reset all progress?")) {
+      setCompletedTasks({});
+      setTotalPoints(0);
+    }
+  };
+
+  return (
+    <div className="min-h-screen p-4 bg-blue-50">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold text-center mb-6 text-purple-700">Andrea's Reward Chart</h1>
+
+        {/* Current Points Display */}
+        <div className="bg-white rounded-lg p-4 mb-6 shadow-md">
+          <h2 className="text-xl font-semibold text-center">
+            Current Points: <span className="text-2xl text-green-600">{totalPoints}</span>
+          </h2>
+
+          {/* Reward Levels */}
+          <div className="mt-4">
+            <h3 className="font-medium mb-2">Rewards:</h3>
+            <ul className="space-y-2">
+              {REWARD_POINTS.map((reward, index) => (
+                <li
+                  key={index}
+                  className={`${totalPoints >= reward.points ? 'text-green-600 font-bold' : 'text-gray-600'}`}
+                >
+                  {reward.label}
+                  {totalPoints >= reward.points && " ✅"}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Reward Chart Table */}
+        <div className="bg-white rounded-lg p-4 shadow-md overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr>
+                <th className="border p-2 bg-gray-100"></th>
+                {DAYS.map(day => (
+                  <th key={day} className="border p-2 bg-gray-100 text-center">{day}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {TASKS.map(task => (
+                <tr key={task.id}>
+                  <td className="border p-2 font-medium">{task.label}</td>
+                  {DAYS.map(day => {
+                    const taskKey = `${task.id}-${day}`;
+                    const isCompleted = completedTasks[day]?.[task.id];
+                    const isRecentlyCompleted = recentlyCompleted === taskKey;
+
+                    return (
+                      <td
+                        key={taskKey}
+                        className="border p-2 text-center cursor-pointer hover:bg-gray-50"
+                        onClick={() => toggleTask(task.id, day)}
+                      >
+                        {isCompleted ? (
+                          <span className={`text-2xl text-green-500 ${isRecentlyCompleted ? 'completed-task' : ''}`}>✓</span>
+                        ) : (
+                          <span className="text-gray-300">○</span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Reset Button */}
+        <div className="mt-6 text-center">
+          <button
+            onClick={resetData}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
+          >
+            Reset Chart
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
