@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f0f9ff;
-  --foreground: #333333;
-  --primary: #8a2be2;
-  --secondary: #00bcd4;
-  --accent: #ff9800;
-  --success: #4caf50;
-  --warning: #ff5722;
+  --background: #e6f2ff;
+  --foreground: #222222;
+  --primary: #7b1fa2;
+  --secondary: #0097a7;
+  --accent: #f57c00;
+  --success: #2e7d32;
+  --warning: #d84315;
 }
 
 @theme inline {
@@ -24,10 +24,10 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --primary: #bb86fc;
-    --secondary: #03dac6;
+    --background: #121212;
+    --foreground: #ffffff;
+    --primary: #ce93d8;
+    --secondary: #4dd0e1;
     --accent: #ffb74d;
     --success: #81c784;
     --warning: #ff8a65;
@@ -38,39 +38,143 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans, Arial, Helvetica, sans-serif);
+  line-height: 1.6;
+  font-weight: 500;
 }
 
 /* Child-friendly button styles */
 button {
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   transform: scale(1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
 }
 
 button:hover {
   transform: scale(1.05);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
 button:active {
   transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Child-friendly table styles */
 table {
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
+  border-spacing: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  border: 3px solid var(--primary);
 }
 
 th, td {
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  border-width: 3px !important;
+}
+
+th {
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 1.2rem;
+  color: var(--primary);
+}
+
+td {
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 
 /* Animation for completed tasks */
 @keyframes pop {
   0% { transform: scale(0.8); opacity: 0.5; }
-  50% { transform: scale(1.2); }
+  50% { transform: scale(1.4); }
   100% { transform: scale(1); opacity: 1; }
 }
 
 .completed-task {
-  animation: pop 0.3s ease-in-out;
+  animation: pop 0.4s ease-in-out;
+  filter: drop-shadow(0 0 4px rgba(46, 125, 50, 0.5));
+}
+
+/* Animation for uncompleted tasks */
+@keyframes fade {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.uncompleted-task {
+  animation: fade 0.4s ease-in-out;
+}
+
+/* Alternating row colors */
+tr:nth-child(even) {
+  background-color: rgba(123, 31, 162, 0.08);
+}
+
+/* Hover effects */
+tr:hover {
+  background-color: rgba(123, 31, 162, 0.12);
+}
+
+/* Empty circle hover effect */
+span:hover {
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+}
+
+/* Task counter in day header */
+th div {
+  background-color: rgba(123, 31, 162, 0.1);
+  border-radius: 4px;
+  padding: 2px 4px;
+  display: inline-block;
+}
+
+/* Tooltip styles */
+[title] {
+  position: relative;
+}
+
+[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  table {
+    font-size: 1rem;
+  }
+
+  th, td {
+    padding: 0.75rem !important;
+  }
+
+  th {
+    font-size: 1.1rem;
+  }
+
+  td {
+    font-size: 1.1rem;
+  }
 }
