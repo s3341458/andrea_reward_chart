@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 // Define the task types based on the reward chart
 const TASKS = [
@@ -37,6 +37,21 @@ export default function Home() {
   // Debug state to show what's happening
   const [debugMessage, setDebugMessage] = useState<string>("");
 
+  // Calculate total points
+  const calculateTotalPoints = useCallback(() => {
+    let points = 0;
+
+    Object.keys(completedTasks).forEach(day => {
+      Object.keys(completedTasks[day]).forEach(taskId => {
+        if (completedTasks[day][taskId]) {
+          points += 1;
+        }
+      });
+    });
+
+    setTotalPoints(points);
+  }, [completedTasks]);
+
   // Load saved data from localStorage on component mount
   useEffect(() => {
     const savedData = localStorage.getItem("rewardChartData");
@@ -59,7 +74,7 @@ export default function Home() {
   // Calculate total points whenever completedTasks changes
   useEffect(() => {
     calculateTotalPoints();
-  }, [completedTasks]);
+  }, [calculateTotalPoints]);
 
   // Save data to localStorage whenever it changes
   useEffect(() => {
@@ -89,7 +104,7 @@ export default function Home() {
       newCompletedTasks[day][taskId] = !currentValue;
 
       // For debugging
-      setDebugMessage(`Task ${taskId} for ${day} was ${currentValue ? 'completed' : 'not completed'}, now set to ${!currentValue ? 'completed' : 'not completed'}`);
+      setDebugMessage(`Task ${taskId} for ${day} was ${currentValue ? "completed" : "not completed"}, now set to ${!currentValue ? "completed" : "not completed"}`);
 
       return newCompletedTasks;
     });
@@ -120,21 +135,6 @@ export default function Home() {
     }
   };
 
-  // Calculate total points
-  const calculateTotalPoints = () => {
-    let points = 0;
-
-    Object.keys(completedTasks).forEach(day => {
-      Object.keys(completedTasks[day]).forEach(taskId => {
-        if (completedTasks[day][taskId]) {
-          points += 1;
-        }
-      });
-    });
-
-    setTotalPoints(points);
-  };
-
   // Reset all data
   const resetData = () => {
     if (confirm("Are you sure you want to reset all progress?")) {
@@ -158,7 +158,7 @@ export default function Home() {
   return (
     <div className="min-h-screen p-4 bg-gradient-to-b from-blue-200 to-purple-100">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-6 text-purple-800 drop-shadow-sm">Andrea's Reward Chart</h1>
+        <h1 className="text-4xl font-bold text-center mb-6 text-purple-800 drop-shadow-sm">Andrea&apos;s Reward Chart</h1>
 
         {/* Instructions */}
         {showInstructions && (

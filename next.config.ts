@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  reactStrictMode: true,
+  // For Vercel deployment, we don't need output: 'export'
 };
 
 export default nextConfig;
